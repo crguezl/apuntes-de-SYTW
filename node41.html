@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2008 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Introducción a las Migraciones en Active Record</TITLE>
+<META NAME="description" CONTENT="Introducción a las Migraciones en Active Record">
+<META NAME="keywords" CONTENT="perlexamples">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2008">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="mystyle.css">
+
+<LINK REL="next" HREF="node42.html">
+<LINK REL="previous" HREF="node40.html">
+<LINK REL="up" HREF="node40.html">
+<LINK REL="next" HREF="node42.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<A NAME="tex2html901"
+  HREF="node42.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html895"
+  HREF="node40.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html889"
+  HREF="node40.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html897"
+  HREF="node94.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A> 
+<A NAME="tex2html899"
+  HREF="node97.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index.png"></A> <A NAME="tex2html2"
+  HREF="http://nereida.deioc.ull.es/~lpp/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="logoLPP.png"
+ ALT="STW"></A><A NAME="tex2html3"
+  HREF="http://campusvirtual.ull.es/1213m2/course/view.php?id=245"><IMG
+  WIDTH="50" ALIGN="BOTTOM" BORDER="0"
+ SRC="moodleLHPlogo.jpeg"
+ ALT="STW moodle"></A><A NAME="tex2html4"
+  HREF="perlexamples.pdf"><IMG
+  WIDTH="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="gv.jpeg"
+ ALT="pdf"></A><A NAME="tex2html5"
+  HREF="http://rubygems.org/"><IMG
+  WIDTH="60" ALIGN="BOTTOM" BORDER="0"
+ SRC="lupa.gif"
+ ALT="ruby gems"></A><A NAME="tex2html6"
+  HREF="http://www.ruby-doc.org/"><IMG
+  WIDTH="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="perlonion.jpeg"
+ ALT="perldoc"></A><A NAME="tex2html7"
+  HREF="http://github.com"><IMG
+  WIDTH="27" ALIGN="BOTTOM" BORDER="0"
+ SRC="google-code-project-hosting.jpeg"
+ ALT="google code project hosting"></A><A NAME="tex2html8"
+  HREF="https://dl.dropbox.com/u/14539152/STW/STWbook/index.html"><IMG
+  WIDTH="27" ALIGN="BOTTOM" BORDER="0"
+ SRC="perl6.jpg"
+ ALT="blogs"></A><A NAME="tex2html9"
+  HREF="http://www.google.es/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="ggoogle.gif"
+ ALT="google"></A><A NAME="tex2html10"
+  HREF="http://www.ull.es/view/centros/etsii/Grado/es"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="etsii.png"
+ ALT="etsii"></A><A NAME="tex2html11"
+  HREF="http://www.ull.es/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="ull.gif"
+ ALT="ull"></A><A NAME="tex2html12"
+  HREF="http://crondinosaur.blogspot.com/"><IMG
+  WIDTH="32" ALIGN="BOTTOM" BORDER="0"
+ SRC="logopcgull.gif"
+ ALT="pcgull"></A>
+<BR>
+<B> Sig:</B> <A NAME="tex2html902"
+  HREF="node42.html">Transformaciones Disponibles</A>
+<B>Sup:</B> <A NAME="tex2html896"
+  HREF="node40.html">Migraciones</A>
+<B> Ant:</B> <A NAME="tex2html890"
+  HREF="node40.html">Migraciones</A>
+<BR> <P>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION02111000000000000000">
+Introducción a las Migraciones en Active Record</A>
+</H2>
+Las migraciones nos permiten gestionar la evolución del esquema utilizado por varias bases de datos físicas<A NAME="tex2html66"
+  HREF="footnode.html#foot1832"><SUP><SPAN CLASS="arabic">8</SPAN>.<SPAN CLASS="arabic">1</SPAN></SUP></A>.
+
+<P>
+Es una solución al problema 
+habitual de tener que añadir 
+un campo para una nueva característica a nuestra base de datos pero
+no saber como sincronizar dicho cambio con el resto de los desarrolladores
+y con el servidor de producción.
+
+<P>
+Con las migraciones podemos <SPAN  CLASS="textit">describir las transformaciones que hacemos al esquema de la base de datos 
+en clases autocontenidas
+que pueden ser añadidas al sistema de control de versiones y ejecutadas contra otras bases de datos que pueden estar una, dos o cinco versiones atrás</SPAN>.
+
+<P>
+Veamos un ejemplo sencillo de migración:
+<PRE>
+class AddSsl &lt; ActiveRecord::Migration
+  def up
+    add_column :accounts, :ssl_enabled, :boolean, :default =&gt; 1
+  end
+
+  def down
+    remove_column :accounts, :ssl_enabled
+  end
+end
+</PRE>
+
+<P>
+Esta migración añade un flag booleano <code>ssl_enabled</code> a la tabla <code>accounts</code>
+o lo suprime si retiramos la migración.
+
+<P>
+Muestra como todas las migraciones disponen de dos métodos <code>up</code> y <code>down</code> 
+que describen las transformaciones requeridas para implementar o suprimir la migración.
+
+<P>
+Estos métodos pueden contener llamadas a métodos específicos de migración
+como <code>add_column</code> o <code>remove_column</code>, pero pueden por supuesto
+código Ruby normal para, por ejemplo, generar  los datos requeridos por las transformaciones.
+
+<P>
+Sigue un ejemplo de una migración mas compleja que también inicializa los datos:
+
+<P>
+<PRE>
+class AddSystemSettings &lt; ActiveRecord::Migration
+  def up
+    create_table :system_settings do |t|
+      t.string  :name
+      t.string  :label
+      t.text    :value
+      t.string  :type
+      t.integer :position
+    end
+
+    SystemSetting.create  :name =&gt; "notice",
+                          :label =&gt; "Use notice?",
+                          :value =&gt; 1
+  end
+
+  def down
+    drop_table :system_settings
+  end
+end
+</PRE>
+Esta migración añade la tabla <code>system_settings</code> 
+utilizando un bloque en el que se especifica el
+esquema de la tabla.
+
+<P>
+Después se crea la primera fila utilizando el modelo
+<code>SystemSetting</code> proveído por Active Record a partir
+de la descripción dada de la tabla.
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<A NAME="tex2html901"
+  HREF="node42.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html895"
+  HREF="node40.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html889"
+  HREF="node40.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html897"
+  HREF="node94.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A> 
+<A NAME="tex2html899"
+  HREF="node97.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index.png"></A> <A NAME="tex2html2"
+  HREF="http://nereida.deioc.ull.es/~lpp/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="logoLPP.png"
+ ALT="STW"></A><A NAME="tex2html3"
+  HREF="http://campusvirtual.ull.es/1213m2/course/view.php?id=245"><IMG
+  WIDTH="50" ALIGN="BOTTOM" BORDER="0"
+ SRC="moodleLHPlogo.jpeg"
+ ALT="STW moodle"></A><A NAME="tex2html4"
+  HREF="perlexamples.pdf"><IMG
+  WIDTH="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="gv.jpeg"
+ ALT="pdf"></A><A NAME="tex2html5"
+  HREF="http://rubygems.org/"><IMG
+  WIDTH="60" ALIGN="BOTTOM" BORDER="0"
+ SRC="lupa.gif"
+ ALT="ruby gems"></A><A NAME="tex2html6"
+  HREF="http://www.ruby-doc.org/"><IMG
+  WIDTH="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="perlonion.jpeg"
+ ALT="perldoc"></A><A NAME="tex2html7"
+  HREF="http://github.com"><IMG
+  WIDTH="27" ALIGN="BOTTOM" BORDER="0"
+ SRC="google-code-project-hosting.jpeg"
+ ALT="google code project hosting"></A><A NAME="tex2html8"
+  HREF="https://dl.dropbox.com/u/14539152/STW/STWbook/index.html"><IMG
+  WIDTH="27" ALIGN="BOTTOM" BORDER="0"
+ SRC="perl6.jpg"
+ ALT="blogs"></A><A NAME="tex2html9"
+  HREF="http://www.google.es/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="ggoogle.gif"
+ ALT="google"></A><A NAME="tex2html10"
+  HREF="http://www.ull.es/view/centros/etsii/Grado/es"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="etsii.png"
+ ALT="etsii"></A><A NAME="tex2html11"
+  HREF="http://www.ull.es/"><IMG
+  WIDTH="35" ALIGN="BOTTOM" BORDER="0"
+ SRC="ull.gif"
+ ALT="ull"></A><A NAME="tex2html12"
+  HREF="http://crondinosaur.blogspot.com/"><IMG
+  WIDTH="32" ALIGN="BOTTOM" BORDER="0"
+ SRC="logopcgull.gif"
+ ALT="pcgull"></A>
+<BR>
+<B> Sig:</B> <A NAME="tex2html902"
+  HREF="node42.html">Transformaciones Disponibles</A>
+<B>Sup:</B> <A NAME="tex2html896"
+  HREF="node40.html">Migraciones</A>
+<B> Ant:</B> <A NAME="tex2html890"
+  HREF="node40.html">Migraciones</A>
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Casiano Rodríguez León <BR>
+2013-04-24</I>
+</ADDRESS>
+</BODY>
+</HTML>
